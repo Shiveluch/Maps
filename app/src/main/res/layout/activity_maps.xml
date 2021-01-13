@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:app2="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/RL1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/map"
+    android:name="com.google.android.gms.maps.SupportMapFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MapsActivity" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text="OK"
+        android:visibility="visible" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button"
+        android:layout_alignParentRight="true"
+        android:text="Центр на карту"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/coord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button2"
+        android:layout_alignParentRight="true"
+        android:text="Координаты"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/dateset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/coord"
+        android:layout_alignParentEnd="true"
+        android:onClick="setDate"
+        android:text="Дата"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/timeset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dateset"
+        android:layout_alignParentEnd="true"
+        android:onClick="setTime"
+        android:text="Дата"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/send"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/timeset"
+        android:layout_alignParentEnd="true"
+        android:onClick="sending"
+        android:text="Sending"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/QR"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/send"
+        android:layout_alignParentEnd="true"
+        android:onClick="scanner"
+        android:text="QScaner"
+        android:visibility="gone" />
+
+    <EditText
+        android:id="@+id/nick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#8BFFFFFF"
+        android:ems="10"
+        android:hint="Позывной"
+        android:inputType="textPersonName" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/navigation"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="start"
+        android:background="@drawable/camo"
+        app2:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
+        app:labelVisibilityMode="unlabeled"
+        app2:menu="@menu/my_navigation_items" />
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/nick"
+        android:layout_marginTop="10dp"
+        android:background="#8BFFFFFF"
+        android:ems="10"
+        android:hint="Пароль"
+        android:inputType="textPersonName" />
+
+</RelativeLayout>
