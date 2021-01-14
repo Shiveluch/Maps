@@ -93,7 +93,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     String strateg_getplayer="http://kamonline.r41.ru/Strateg/get_strateg_player_byname.php/get.php?nom=";
     String getinfo="";
     String getTeamInfo="";
-    String _password;
 
     public int teammate;
     private LocationManager locationManager;
