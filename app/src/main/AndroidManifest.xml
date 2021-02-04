@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.maps" >
+    package="com.example.maps">
+
+
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the "MyLocation" functionality.
     -->
+    <uses-feature
+        android:name="android.hardware.camera2"
+        android:required="true" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -20,13 +28,22 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/tactics"
         android:supportsRtl="true"
+        android:hardwareAccelerated="true"
         android:theme="@style/Theme.Maps"
-        android:usesCleartextTraffic="true" >
+        android:usesCleartextTraffic="true">
+        <activity android:name=".upload"></activity>
+        <activity android:name=".SideCommander" />
+        <activity android:name=".master" />
+        <activity android:name=".MapsActivity" />
         <activity
             android:name=".NavigationActivity"
             android:label="@string/title_activity_navigation"
-            android:theme="@style/Theme.Maps.NoActionBar" >
-        </activity>
+            android:theme="@style/Theme.Maps.NoActionBar" />
+
+        <service
+            android:name=".MapService"
+            android:enabled="true"
+            android:exported="true" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -44,8 +61,9 @@
             android:required="false" />
 
         <activity
-            android:name=".MapsActivity"
-            android:label="@string/title_activity_maps" >
+            android:name=".Login"
+            android:label="@string/title_activity_maps"
+            android:theme="@style/Theme.Maps.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

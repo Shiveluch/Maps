@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="10dp"
+    android:layout_marginTop="10dp"
+
+    tools:context=".master">
+
+    <Button
+        android:id="@+id/event"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/master_password"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:text="Создать игру" />
+
+    <EditText
+        android:id="@+id/event_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:background="#FFFFFF"
+        android:ems="10"
+        android:hint="Название  игры"
+        android:inputType="textPersonName" />
+
+    <TextView
+        android:id="@+id/event_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/event"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:background="#FFFFFF" />
+
+    <EditText
+        android:id="@+id/master_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/event_name"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:background="#FFFFFF"
+        android:ems="10"
+        android:hint="Логин организатора"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/master_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/master_login"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:background="#FFFFFF"
+        android:ems="10"
+        android:hint="Пароль организатора"
+        android:inputType="textPassword" />
+
+</RelativeLayout>

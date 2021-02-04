@@ -9,8 +9,7 @@
         android:title=""
         android:checked="true"
         android:onClick="info"
-
-        android:icon="@drawable/info" />
+        android:icon="@drawable/mapmenu" />
     <item android:id="@+id/action_data"
         android:title=""
         android:checked="true"
@@ -24,6 +23,13 @@
         android:onClick="teamInfo"
 
         android:icon="@drawable/team" />
+
+    <item android:id="@+id/action_console"
+        android:title=""
+        android:checked="true"
+        android:onClick="console"
+
+        android:icon="@drawable/rightarrow" />
 
 
 </menu>

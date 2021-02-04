@@ -5,4 +5,9 @@
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">176dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="in_pixels">1px</dimen>
+    <dimen name="map_camera_padding_new_bounds">100dp</dimen>
+    <dimen name="in_sp">100sp</dimen>
+    <dimen name="twodp">2dp</dimen>
 </resources>

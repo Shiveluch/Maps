@@ -16,6 +16,96 @@
         android:layout_height="match_parent"
         tools:context=".MapsActivity" />
 
+    <RelativeLayout
+        android:id="@+id/org"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/instruct"
+        tools:visibility="gone">
+
+        <TextView
+            android:id="@+id/Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="50dp"
+            android:layout_marginRight="50dp"
+            android:fontFamily="@font/font2"
+            android:text="Организатор"
+            android:textColor="#000000"
+            android:textSize="24sp" />
+
+        <EditText
+            android:id="@+id/eventName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/Title"
+            android:layout_marginLeft="60dp"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:hint="Название игры"
+            android:inputType="textPersonName"
+            android:textColor="#000000" />
+
+        <EditText
+            android:id="@+id/orgLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/eventName"
+            android:layout_marginLeft="60dp"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:hint="Логин организатора"
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/orgPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/orgLogin"
+            android:layout_marginLeft="60dp"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:hint="Пароль организатора"
+            android:inputType="textPersonName"
+            android:textColor="#000000" />
+
+        <TextView
+            android:id="@+id/org_passinfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/approve_org"
+            android:layout_marginLeft="60dp"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/azov"
+            android:text="Загружаю..."
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/approve_org"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_below="@id/orgPassword"
+            android:layout_alignParentRight="true"
+            android:layout_centerHorizontal="false"
+            android:layout_marginRight="60dp"
+            android:alpha="0.6"
+            android:src="@drawable/approve"
+            android:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/cancel_org"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_below="@id/org_passinfo"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="60dp"
+            android:alpha="0.6"
+            android:src="@drawable/cancel"
+            android:visibility="visible" />
+    </RelativeLayout>
+
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
@@ -24,64 +114,6 @@
         android:layout_alignParentRight="false"
         android:layout_marginTop="10dp"
         android:text="OK"
-        android:visibility="visible" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/button"
-        android:layout_alignParentRight="true"
-        android:text="Центр на карту"
-        android:visibility="gone" />
-
-    <Button
-        android:id="@+id/coord"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/button2"
-        android:layout_alignParentRight="true"
-        android:text="Координаты"
-        android:visibility="gone" />
-
-    <Button
-        android:id="@+id/dateset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/coord"
-        android:layout_alignParentEnd="true"
-        android:onClick="setDate"
-        android:text="Дата"
-        android:visibility="gone" />
-
-    <Button
-        android:id="@+id/timeset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/dateset"
-        android:layout_alignParentEnd="true"
-        android:onClick="setTime"
-        android:text="Дата"
-        android:visibility="gone" />
-
-    <Button
-        android:id="@+id/send"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/timeset"
-        android:layout_alignParentEnd="true"
-        android:onClick="sending"
-        android:text="Sending"
-        android:visibility="gone" />
-
-    <Button
-        android:id="@+id/QR"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/send"
-        android:layout_alignParentEnd="true"
-        android:onClick="scanner"
-        android:text="QScaner"
         android:visibility="gone" />
 
     <EditText
@@ -91,7 +123,8 @@
         android:background="#8BFFFFFF"
         android:ems="10"
         android:hint="Позывной"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:visibility="gone" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navigation"
@@ -114,6 +147,179 @@
         android:background="#8BFFFFFF"
         android:ems="10"
         android:hint="Пароль"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/side_commander"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/instruct"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/Sidecom_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="50dp"
+            android:layout_marginRight="50dp"
+            android:fontFamily="@font/font2"
+            android:gravity="right"
+            android:text="Командир стороны:"
+            android:textColor="#000000"
+            android:textSize="24sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="490dp"
+            android:layout_below="@id/Sidecom_title"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <ListView
+                    android:id="@+id/div_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="50dp"
+                    android:layout_weight="0.5"
+                    android:divider="@color/list_divider"
+                    android:dividerHeight="@dimen/twodp" />
+
+                <ListView
+                    android:id="@+id/team_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="30dp"
+                    android:layout_weight="0.5" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="30dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/div_orders"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|center_horizontal"
+                    android:layout_marginLeft="50dp"
+                    android:layout_weight="1"
+                    android:text="Указания"
+                    app:backgroundTint="#000000" />
+
+                <Button
+                    android:id="@+id/button4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.05"
+                    android:text="Button"
+                    android:visibility="invisible" />
+
+                <Button
+                    android:id="@+id/team_orders"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="30dp"
+                    android:layout_weight="1"
+                    android:text="Указания"
+                    app:backgroundTint="#000000" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/division_commander"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:background="@drawable/instruct"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/Divcom_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="50dp"
+            android:layout_marginRight="50dp"
+            android:fontFamily="@font/font2"
+            android:gravity="right"
+            android:text="Командир стороны:"
+            android:textColor="#000000"
+            android:textSize="24sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/Divcom_title"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginBottom="35dp"
+            android:orientation="horizontal">
+
+            <ListView
+                android:id="@+id/team_div_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+
+            </ListView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/newteamfield"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.1"
+
+                    />
+
+                <Button
+                    android:id="@+id/addnewteam"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="0.15"
+                    android:text="Новая команда"
+                    android:textSize="12sp" />
+
+                <ListView
+                    android:id="@+id/side_orders_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_weight="0.8" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/team_commander"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+    </RelativeLayout>
 
 </RelativeLayout>
