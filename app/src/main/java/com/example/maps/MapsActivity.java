@@ -28,6 +28,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Html;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -114,6 +115,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Button button, divorders, teamorders, addnewteam;
     Context context;
     Location location;
+    private Location LastLocation;
+
     EditText nick, password, eventName,orgLogin,orgPassword, newteamfield;
     RelativeLayout org, s_com,d_com_layout,t_com;
     ImageView approve_org,cancel_org;
@@ -146,63 +149,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private final List<BitmapDescriptor> images = new ArrayList<BitmapDescriptor>();
 
-    private void SendRequestService(){
-        Log.d("LOG","отсылаем запрос в сервис на получение первичного датапака");
-        Intent InnerIntent = new Intent("MapService.RequestService");
-        sendBroadcast(InnerIntent);
-    }
-    private void InitBroadcatReceiver(){
-        registerReceiver(ServiceReceiver, new IntentFilter("MapService.StringBroadcast"));
-        registerReceiver(ServiceReceiver, new IntentFilter("MapService.ToastBroadcast"));
-        registerReceiver(ServiceReceiver, new IntentFilter("MapService.DatapackBroadcast"));
-    }
 
-
-
-
-    private final BroadcastReceiver ServiceReceiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent InnerIntent) {
-            //Log.d("жопонька","принят бродкаст");
-            String action = "";
-            action = InnerIntent.getAction();
-
-            // When discovery finds a new device
-            switch (action) {
-                case "MapService.StringBroadcast":
-                    Log.d("LOG","в стартовое активити пришла строка:"+InnerIntent.getStringExtra("Message"));
-                    NotifyLog(InnerIntent.getStringExtra("Message"));
-                    break;
-                case "MapService.ToastBroadcast":
-
-                    break;
-                case "MapService.DatapackBroadcast":
-                    dataPack=(DataPack)InnerIntent.getSerializableExtra("Datapack");
-                    NotifySelect(InnerIntent.getStringExtra("Event"));
-                    break;
-            }
-        }
-    };
     public int teammate;
-    private LocationManager locationManager;
-    private Location LastLocation;
-    private MyLocListener myLocListener;
+
     public double lat, lon, touch_lat, touch_lon;
     public int radiation = 0;
-    boolean GpsStatus = false;
+
     Criteria criteria;
     String alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
     public int counter = 0, dang_counter = 0;
     Calendar dateAndTime = Calendar.getInstance();
-String currentName,currentTeam,currentSide;
+    String currentName,currentTeam,currentSide;
     double center_lat = 55.37581958597319;
     double center_lon = 36.7833898306835;
     int sam_radius = 2000;
     private GroundOverlay groundOverlay;
-    Intent intent;
     boolean show_console=false;
-    DataPack dataPack;
     private GroundOverlay groundOverlayRotated;
 
     String name,teamname,sidename;
@@ -280,6 +242,48 @@ String currentName,currentTeam,currentSide;
     RelativeLayout RL1;
     private GestureDetectorCompat lSwipeDetector;
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(NeedStartService()){
+            Log.d("жопонька","инициируем запуск сервиса из активити ПДА");
+            intent = new Intent(this, MapService.class);
+            intent.setPackage("com.example.user.pdashiveluch");
+            //intent.putExtra("ResetPlayer",resetPlayer);
+            //intent.putExtra("Name",Name);
+            //intent.putExtra("GroupID",group);
+            startService(intent);
+        } else{
+            Log.d("жопонька","в активити ПДА обнаружен старый ранее запущенный сервис");
+        }
+
+
+
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d("жопонька","onDestroy активности pda");
+        unregisterReceiver(ServiceReceiver);
+        super.onDestroy();
+
+    }
+
+    @Override
+    protected void onPause() {
+        unregisterReceiver(ServiceReceiver);
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        InitBroadcastReceiver();
+        SendRequestService();
+    }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -287,6 +291,8 @@ String currentName,currentTeam,currentSide;
         setContentView(R.layout.activity_maps);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         EnableRuntimePermission();
+
+
         org_passinfo=findViewById(R.id.org_passinfo);
         lSwipeDetector = new GestureDetectorCompat(this, new MyGestureListener());
        RL1 = findViewById(R.id.RL1);
@@ -325,7 +331,7 @@ String currentName,currentTeam,currentSide;
         event_name=mSettings.getString(APP_PREFERENCES_EVENT,"");
         approve_org=findViewById(R.id.approve_org);
         cancel_org=findViewById(R.id.cancel_org);
-        myLocListener = new MyLocListener();
+
         nick = findViewById(R.id.nick);
         password = findViewById(R.id.password);
         sidecom.setText("командир стороны: "+"\n"+mSettings.getString(APP_PREFERENCES_SIDE,""));
@@ -344,8 +350,8 @@ String currentName,currentTeam,currentSide;
             Toast.makeText(MapsActivity.this,""+ initLat+", "+initLon, Toast.LENGTH_SHORT).show();
         }
 
-        criteria = new Criteria();
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        //criteria = new Criteria();
+
         context = getApplicationContext();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -506,171 +512,67 @@ approve_org.setOnClickListener(new View.OnClickListener() {
 
                 }}});
 
-        CheckGpsStatus();
-        //init();
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                while (!isInterrupted()) {
-                    try {
-                        Thread.sleep(1000);  //1000ms = 1 sec
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                              if (showmap) {init();showmap=!showmap;}
-                                CheckGpsStatus();
-                                if (GpsStatus == true) {
-                                    if (ActivityCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                                            && ActivityCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                                        Log.d("Permisns", "недостаточно разрешений");
-                                        Toast.makeText(MapsActivity.this, "Недостаточно разрешений", Toast.LENGTH_LONG).show();
-                                        return;
-                                    }
-                                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, myLocListener);
-                                    Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-                                    //dataset.setText(Date);
 
-                                    if (location != null) {
-
-
-                                        double cLat = location.getLatitude();
-                                        double cLon = location.getLongitude();
-                                        lat=cLat;
-                                        lon=cLon;
-                                        LatLng position = new LatLng(cLat, cLon);
-
-//                                        button3.setText("" + cLat + "," + cLon);
-                                        Log.d("GPSpos", "Timer: -" + position.latitude + ", " + position.longitude);
-                                        dang_counter++;
-                                        if (dang_counter > 30 && sam_radius > 100) {
-                                            sam_radius = sam_radius - 100;
-                                            dang_counter = 0;
-                                        }
-
-
-                                        int zone = (int) (distanceInKmBetweenEarthCoordinates(center_lat, center_lon, position.latitude, position.longitude) * 1000);
-                                        if (zone <= sam_radius) {
-                                            //button3.setText(button3.getText().toString() + "\n" + "Расстояние до границ опасной зоны " + (sam_radius - zone) + " метров");
-                                        }
-                                        if (zone > sam_radius) {
-                                            //button3.setText(button3.getText().toString() + "\n" + "За границами опасной зоны на " + (Math.abs((sam_radius - zone))) + " метров");
-                                        }
-
-                                        for (int i = 0; i < anomaly_radius.length; i++) {
-                                            int dist = (int) (distanceInKmBetweenEarthCoordinates(cLat, cLon, anomaly_latitudes[i], anomaly_longitudes[i]) * 1000); //в метрах
-                                            if (dist < anomaly_radius[i]) {
-                                                radiation++;
-                                             //   button3.setText(button3.getText().toString() + "\n" + "Опасность в " + dist + " метрах. " + "\n" + anomaly_titles[i]
-                                              //          + "\n" + "Накопленная радиация: " + radiation);
-
-
-                                            }
-
-                                        }
-
-                                        counter++;
-                                        if (counter > 30) {
-                                            counter=0;
-                                            if(markers!=null&&mMap!=null){
-                                                for(int i=0;i<markers.size();i++){
-                                                    Log.d ("Markers", ""+markers.get(i));
-                                                    markers.get(i).remove();
-                                                }
-                                            }
-
-                                            markers.clear();
-
-                                            mMap.addMarker(new MarkerOptions().position(position).icon(getBitmapHighDescriptor(R.drawable.stalker)).title("I'm here"));
-
-                                            //init();
-                                        }
-
-                                        mMap.setMyLocationEnabled(true);
-
-
-
-
-                                        LatLng touch = new LatLng(touch_lat, touch_lon);
-
-                                        mMap.addMarker(new MarkerOptions()
-                                                .position(touch)
-                                                .title("Точка")
-                                        );
-
-                                    }
-                                }
-                            }
-                        });
-
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            }
-        };
-        t.start();
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        InitBroadcatReceiver();
-        SendRequestService();
-    }
+
+
 //region blocked
-//    private void setInitialDate() {
-//        dataset.setText(DateUtils.formatDateTime(this,
-//                dateAndTime.getTimeInMillis(),
-//                DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR));
-//
-//
-//    }
-//
-//    private void setInitialTime() {
-//        timeset.setText(DateUtils.formatDateTime(this,
-//                dateAndTime.getTimeInMillis(),
-//                DateUtils.FORMAT_SHOW_TIME));
-//
-//    }
+    /*
+    private void setInitialDate() {
+        dataset.setText(DateUtils.formatDateTime(this,
+                dateAndTime.getTimeInMillis(),
+                DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR));
 
- //
+
+    }
+
+    private void setInitialTime() {
+        timeset.setText(DateUtils.formatDateTime(this,
+                dateAndTime.getTimeInMillis(),
+                DateUtils.FORMAT_SHOW_TIME));
+
+    }
+
+
 
     // отображаем диалоговое окно для выбора времени
-//    public void setTime(View v) {
-//        new TimePickerDialog(MapsActivity.this, t,
-//                dateAndTime.get(Calendar.HOUR_OF_DAY),
-//                dateAndTime.get(Calendar.MINUTE), true)
-//                .show();
-//
-//    }
+    public void setTime(View v) {
+        new TimePickerDialog(MapsActivity.this, t,
+                dateAndTime.get(Calendar.HOUR_OF_DAY),
+                dateAndTime.get(Calendar.MINUTE), true)
+                .show();
+
+    }
 
 
     // установка начальных даты и времени
     // установка обработчика выбора времени
-//    TimePickerDialog.OnTimeSetListener t = new TimePickerDialog.OnTimeSetListener() {
-//        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-//            dateAndTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
-//            dateAndTime.set(Calendar.MINUTE, minute);
-//            Time = "" + dateAndTime.get(Calendar.HOUR_OF_DAY) + ":" + (dateAndTime.get(Calendar.MINUTE));
-//            //timeset.setText(Time);
-//            setInitialTime();
-//        }
- //   };
+    TimePickerDialog.OnTimeSetListener t = new TimePickerDialog.OnTimeSetListener() {
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            dateAndTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            dateAndTime.set(Calendar.MINUTE, minute);
+            Time = "" + dateAndTime.get(Calendar.HOUR_OF_DAY) + ":" + (dateAndTime.get(Calendar.MINUTE));
+            //timeset.setText(Time);
+            setInitialTime();
+        }
+    };
 
     // установка обработчика выбора даты
-//    DatePickerDialog.OnDateSetListener d = new DatePickerDialog.OnDateSetListener() {
-//        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-//            dateAndTime.set(Calendar.YEAR, year);
-//            dateAndTime.set(Calendar.MONTH, monthOfYear);
-//            dateAndTime.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-//            Date = "" + dateAndTime.get(Calendar.YEAR) + "/" + (dateAndTime.get(Calendar.MONTH) + 1) + "/" + dateAndTime.get(Calendar.DAY_OF_MONTH);
-//            //dataset.setText(Date);
-//            setInitialDate();
-//        }
-//    };
-//end region
+    DatePickerDialog.OnDateSetListener d = new DatePickerDialog.OnDateSetListener() {
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            dateAndTime.set(Calendar.YEAR, year);
+            dateAndTime.set(Calendar.MONTH, monthOfYear);
+            dateAndTime.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            Date = "" + dateAndTime.get(Calendar.YEAR) + "/" + (dateAndTime.get(Calendar.MONTH) + 1) + "/" + dateAndTime.get(Calendar.DAY_OF_MONTH);
+            //dataset.setText(Date);
+            setInitialDate();
+        }
+    };
+     */
+//endregion
+
     public void sending(View v) {
         String t_lat = "" + touch_lat;
         String t_lon = "" + touch_lon;
@@ -947,10 +849,7 @@ approve_org.setOnClickListener(new View.OnClickListener() {
         return earthRadiusKm * c;
     }
 
-    public void CheckGpsStatus() {
-        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        GpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-    }
+
 
     public void EnableRuntimePermission() {
 
@@ -1538,6 +1437,12 @@ groundOverlay.setDimensions(90000,1000000);
             case "NICKNAME":
                 NotifyNickname();
                 break;
+            case "PARAMETERS":
+                NotifyParameters();
+                break;
+            default:
+                Log.d("жопонька","Неизвестный нотификатор "+value);
+                break;
     }
 
 
@@ -1552,9 +1457,20 @@ groundOverlay.setDimensions(90000,1000000);
 
     }
 
+    private void NotifyParameters() {
+       //получен свежий датапак, надо обновить то что на экране
+
+
+
+    }
+
     private void NotifyLog(String event) {
 
         Log.d("LOG",event);
+    }
+
+    private void NotifyToast(String value) {
+        Toast.makeText(getApplicationContext(), value, Toast.LENGTH_LONG).show();
     }
 
     public void got(boolean Reset){
@@ -1591,22 +1507,7 @@ groundOverlay.setDimensions(90000,1000000);
         }
     }
 
-    public boolean NeedStartService(){
 
-        boolean tStartService = true;
-        ActivityManager am = (ActivityManager)getSystemService(ACTIVITY_SERVICE);
-        List<ActivityManager.RunningServiceInfo> rs = am.getRunningServices(Integer.MAX_VALUE);
-        String ServiceName=MapService.class.getName();
-        for (int i=0; i<rs.size(); i++) {
-            ActivityManager.RunningServiceInfo rsi = rs.get(i);
-            if(ServiceName.equalsIgnoreCase(rsi.service.getClassName())){
-                tStartService = false;
-                break;
-            }
-        }
-        return tStartService;
-
-    }
 
 
     private class MyGestureListener extends GestureDetector.SimpleOnGestureListener{
@@ -1917,8 +1818,7 @@ final String D_NAME_PASS = "division"; // основной текст
         }
     };
 
-    private void KMLparsing()
-    {
+    private void KMLparsing() {
         String result;
         try {
             Resources res = getResources();
@@ -1973,8 +1873,7 @@ final String D_NAME_PASS = "division"; // основной текст
 
     }
 
-    private void AnomalyMarkersDraw()
-    {
+    private void AnomalyMarkersDraw(){
         LatLng[] anomaly = new LatLng[anomaly_latitudes.length];
         for (int i = 0; i < anomaly_latitudes.length; i++) {
             anomaly[i] = new LatLng(anomaly_latitudes[i], anomaly_longitudes[i]);
@@ -1989,4 +1888,81 @@ final String D_NAME_PASS = "division"; // основной текст
     }
 
 
+    //region связь с сервисом
+    Intent intent;
+    DataPack dataPack;
+
+    private void SendRequestService(){
+        Log.d("LOG","отсылаем запрос в сервис на получение первичного датапака");
+        Intent InnerIntent = new Intent("MapService.RequestService");
+        sendBroadcast(InnerIntent);
+    }
+
+    private void InitBroadcastReceiver(){
+        registerReceiver(ServiceReceiver, new IntentFilter("MapService.StringBroadcast"));
+        registerReceiver(ServiceReceiver, new IntentFilter("MapService.ToastBroadcast"));
+        registerReceiver(ServiceReceiver, new IntentFilter("MapService.DatapackBroadcast"));
+    }
+
+
+
+
+    private final BroadcastReceiver ServiceReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent InnerIntent) {
+            //Log.d("жопонька","принят бродкаст");
+            String action = "";
+            action = InnerIntent.getAction();
+
+            // When discovery finds a new device
+            switch (action) {
+                case "MapService.StringBroadcast":
+                    Log.d("LOG","в стартовое активити пришла строка:"+InnerIntent.getStringExtra("Message"));
+                    NotifyLog(InnerIntent.getStringExtra("Message"));
+                    break;
+                case "MapService.ToastBroadcast":
+                    NotifyToast(InnerIntent.getStringExtra("Message"));
+                    break;
+                case "MapService.DatapackBroadcast":
+                    dataPack=(DataPack)InnerIntent.getSerializableExtra("Datapack");
+                    NotifySelect(InnerIntent.getStringExtra("Event"));
+                    break;
+            }
+        }
+    };
+
+    private Handler handle;
+    public Handler GetHandler(){
+        return handle;
+    }
+
+
+
+    private void SendActionBroadcast(String action){
+        Intent InnerIntent = new Intent("ShiveluchActivity.Action");
+        InnerIntent.putExtra("ExtraAction", action);
+        sendBroadcast(InnerIntent);
+    }
+
+
+
+    public boolean NeedStartService(){
+
+        boolean tStartService = true;
+        ActivityManager am = (ActivityManager)getSystemService(ACTIVITY_SERVICE);
+        List<ActivityManager.RunningServiceInfo> rs = am.getRunningServices(Integer.MAX_VALUE);
+        String ServiceName=MapService.class.getName();
+        for (int i=0; i<rs.size(); i++) {
+            ActivityManager.RunningServiceInfo rsi = rs.get(i);
+            if(ServiceName.equalsIgnoreCase(rsi.service.getClassName())){
+                tStartService = false;
+                break;
+            }
+        }
+        return tStartService;
+
+    }
+
+    //endregion
 }

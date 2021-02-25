@@ -15,12 +15,15 @@ public static DataPack GetDataPack(MapService service)
 
     PlayerChracteristics val=service.playerChracteristics;
     DataPack serialized=new DataPack();
-    serialized.nickname=val.isNickname();
-    serialized.team=val.isTeam();
-    serialized.side=val.isSide();
-    serialized.radiaton=val.isRadiation();
-    serialized.latitude=val.isLat();
-    serialized.longitude=val.isLon();
+    /*
+    serialized.nickname=val.getNickname();
+    serialized.team=val.getTeam();
+    serialized.side=val.getSide();
+    serialized.radiaton=val.getRadiation();
+
+     */
+    serialized.latitude=val.getLatitude();
+    serialized.longitude=val.getLongitude();
 
     return serialized;
 

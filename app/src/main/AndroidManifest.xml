@@ -12,6 +12,7 @@
         android:name="android.hardware.camera2"
         android:required="true" />
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -31,7 +32,17 @@
         android:hardwareAccelerated="true"
         android:theme="@style/Theme.Maps"
         android:usesCleartextTraffic="true">
-        <activity android:name=".upload"></activity>
+        <service
+            android:name=".classes.HideNotificationService"
+            android:enabled="true"
+            android:exported="true"/>
+        <activity android:name=".upload"/>
+        <service
+            android:name=".MapService"
+            android:enabled="true"
+            android:exported="true"
+            android:label="Maps service"
+            android:process=":ServiceProcess" />
         <activity android:name=".SideCommander" />
         <activity android:name=".master" />
         <activity android:name=".MapsActivity" />
@@ -40,10 +51,6 @@
             android:label="@string/title_activity_navigation"
             android:theme="@style/Theme.Maps.NoActionBar" />
 
-        <service
-            android:name=".MapService"
-            android:enabled="true"
-            android:exported="true" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").

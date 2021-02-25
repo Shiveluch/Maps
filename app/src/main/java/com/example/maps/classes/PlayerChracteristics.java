@@ -6,38 +6,43 @@ import com.example.maps.MapService;
 
 
 public final class PlayerChracteristics {
-public String nickname,team,side;
-public int radiation;
+//public String nickname,team,side;
+//public int radiation;
 double latitude, longitude;
 private MapService service;
 
 public PlayerChracteristics (MapService value)
 {
     service=value;
-    nickname="";
-    team="";
-    side="";
+    //nickname="";
+    //team="";
+    //side="";
     latitude=0.0;
     longitude=0.0;
-    radiation=0;
+    //radiation=0;
 }
 
     public PlayerChracteristics() {
 
     }
 
-    public String isNickname() {
+    /*
+    public String getNickname() {
     return nickname;
     }
-    public String isTeam() {
+    public String getTeam() {
         return team;
     }
-    public String isSide() {
+    public String getSide() {
         return side;
     }
-    public double isLat() {return latitude;}
-    public double isLon(){return longitude;}
-    public int isRadiation() {
+
+     */
+    public double getLatitude() {return latitude;}
+    public double getLongitude(){return longitude;}
+
+    /*
+    public int getRadiation() {
         return radiation;
     }
 
@@ -63,6 +68,16 @@ public PlayerChracteristics (MapService value)
         this.side = side;
         service.NotifyActivity("SIDE");
 
+    }
+
+     */
+
+    public void setLatitude(double value){
+        latitude=value;
+    }
+
+    public void setLongitude(double value){
+        longitude=value;
     }
 
 }
