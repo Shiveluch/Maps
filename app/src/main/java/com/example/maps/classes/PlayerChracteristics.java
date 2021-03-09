@@ -8,7 +8,7 @@ import com.example.maps.MapService;
 public final class PlayerChracteristics {
 //public String nickname,team,side;
 //public int radiation;
-double latitude, longitude;
+double latitude=0.0, longitude = 0.0;
 private MapService service;
 
 public PlayerChracteristics (MapService value)

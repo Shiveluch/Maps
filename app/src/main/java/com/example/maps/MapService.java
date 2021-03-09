@@ -224,13 +224,11 @@ public class MapService extends Service {
             return;
         }
         criteria = new Criteria();
-
+        playerChracteristics=new PlayerChracteristics(this);
         Notification.Builder builder = new Notification.Builder(this)
                 .setSmallIcon(R.drawable.tactics); //заменить на нужное
-        Notification notification;
-        //if (Build.VERSION.SDK_INT < 16)
-        //    notification = builder.getNotification();
-        //else
+         Notification notification;
+           if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) builder.setChannelId("maps");
         notification = builder.build();
         startForeground(777, notification);
         Intent hideIntent = new Intent(this, HideNotificationService.class);
@@ -275,6 +273,7 @@ public class MapService extends Service {
         @Override
         public void run() {
             CheckGpsStatus();
+            Log.d("coord",""+lat+" , "+ lon);
             if (GpsStatus == true) {
 
                 service.locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, myLocListener);
@@ -288,6 +287,7 @@ public class MapService extends Service {
                     double cLon = location.getLongitude();
                     lat=cLat;
                     lon=cLon;
+
                     playerChracteristics.setLongitude(lon);
                     playerChracteristics.setLatitude(lat);
                     /*

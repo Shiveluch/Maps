@@ -166,7 +166,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GroundOverlay groundOverlay;
     boolean show_console=false;
     private GroundOverlay groundOverlayRotated;
-
+    ArrayList markers_list = new ArrayList();
     String name,teamname,sidename;
     String summary="";
     boolean showmap=true;
@@ -246,15 +246,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onStart() {
         super.onStart();
         if(NeedStartService()){
-            Log.d("жопонька","инициируем запуск сервиса из активити ПДА");
+            Log.d("жопонька","инициируем запуск сервиса из активити");
             intent = new Intent(this, MapService.class);
-            intent.setPackage("com.example.user.pdashiveluch");
+            intent.setPackage("com.example.user.maps");
             //intent.putExtra("ResetPlayer",resetPlayer);
             //intent.putExtra("Name",Name);
             //intent.putExtra("GroupID",group);
-            startService(intent);
+            startForegroundService(intent);
         } else{
-            Log.d("жопонька","в активити ПДА обнаружен старый ранее запущенный сервис");
+            Log.d("жопонька","в активити  обнаружен старый ранее запущенный сервис");
         }
 
 
@@ -291,19 +291,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         EnableRuntimePermission();
-
-
         org_passinfo=findViewById(R.id.org_passinfo);
         lSwipeDetector = new GestureDetectorCompat(this, new MyGestureListener());
-       RL1 = findViewById(R.id.RL1);
-       org=findViewById(R.id.org);
-       org.setVisibility(GONE);
-       s_com=findViewById(R.id.side_commander);
-       s_com.setVisibility(GONE);
-       eventName=findViewById(R.id.eventName);
-       orgLogin=findViewById(R.id.orgLogin);
-       orgPassword=findViewById(R.id.orgPassword);
-       sidecom=findViewById(R.id.Sidecom_title);
+        RL1 = findViewById(R.id.RL1);
+        org=findViewById(R.id.org);
+        org.setVisibility(GONE);
+        s_com=findViewById(R.id.side_commander);
+        s_com.setVisibility(GONE);
+        eventName=findViewById(R.id.eventName);
+        orgLogin=findViewById(R.id.orgLogin);
+        orgPassword=findViewById(R.id.orgPassword);
+        sidecom=findViewById(R.id.Sidecom_title);
        div_list=findViewById(R.id.div_list);
        team_list=findViewById(R.id.team_list);
        divorders=findViewById(R.id.div_orders);
@@ -382,7 +380,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        if (CheckFillField())
+        {
+            got(true);
+        }
 
         button = findViewById(R.id.button);
 //        if (mSettings.contains(Login.APP_PREFERENCES_NAME))
@@ -505,10 +506,7 @@ approve_org.setOnClickListener(new View.OnClickListener() {
 //                    Toast.makeText(MapsActivity.this, summary, Toast.LENGTH_LONG).show();
                     //button.setText(summary);
 
-                    if (CheckFillField())
-                    {
-                        got(true);
-                    }
+
 
                 }}});
 
