@@ -45,8 +45,11 @@ import android.widget.Toast;
 //import com.example.user.pdashiveluch.classes.PlayerCharcteristics;
 
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
+import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
+//import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
@@ -54,8 +57,8 @@ import androidx.core.content.ContextCompat;
 import com.example.maps.classes.DataPack;
 import com.example.maps.classes.HideNotificationService;
 import com.example.maps.classes.PlayerChracteristics;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+//import com.google.android.gms.maps.model.LatLng;
+//import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -208,6 +211,51 @@ public class MapService extends Service {
         }
     };
 
+    public static final String CHANNEL_ID = "786445";
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void createNotification(Service context) {
+        String channelId = createChannel(context);
+        Notification notification =
+                buildNotification(context, channelId);
+        context.startForeground(
+                786445, notification);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private Notification buildNotification(
+            Service context, String channelId) {
+
+
+        // Create a notification.
+        return new Notification.Builder(context, channelId)
+                .setContentTitle("Maps")
+                .setContentText("Maps")
+                .setSmallIcon(R.drawable.tactics)
+                //.setContentIntent(piLaunchMainActivity)
+                //.setActions(stopAction)
+                .setStyle(new Notification.BigTextStyle())
+                .build();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @NonNull
+    private String createChannel(Service ctx) {
+        // Create a channel.
+        NotificationManager notificationManager =
+                (NotificationManager)
+                        ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+        CharSequence channelName = "Playback channel";
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationChannel notificationChannel =
+                new NotificationChannel(
+                        CHANNEL_ID, channelName, importance);
+
+        notificationManager.createNotificationChannel(
+                notificationChannel);
+        return CHANNEL_ID;
+    }
+
     @Override
     public void onCreate() {
         Toast.makeText(getApplicationContext(), "Служба создана", Toast.LENGTH_SHORT);
@@ -225,14 +273,20 @@ public class MapService extends Service {
         }
         criteria = new Criteria();
         playerChracteristics=new PlayerChracteristics(this);
-        Notification.Builder builder = new Notification.Builder(this)
-                .setSmallIcon(R.drawable.tactics); //заменить на нужное
-         Notification notification;
-           if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) builder.setChannelId("maps");
-        notification = builder.build();
-        startForeground(777, notification);
-        Intent hideIntent = new Intent(this, HideNotificationService.class);
-        startService(hideIntent);
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            createNotification(this);
+        } else {
+            Notification.Builder builder = new Notification.Builder(this)
+                    .setSmallIcon(R.drawable.tactics); //заменить на нужное
+            Notification notification;
+            //builder.setChannelId("maps");
+            notification = builder.build();
+            startForeground(777, notification);
+            //Intent hideIntent = new Intent(this, HideNotificationService.class);
+            //startForeground(786445,notification);
+        }
+
 
         Log.d("жопонька","onCreate завершен");
         super.onCreate();

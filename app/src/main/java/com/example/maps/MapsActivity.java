@@ -1,5 +1,6 @@
 package com.example.maps;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GestureDetectorCompat;
@@ -27,6 +28,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Html;
@@ -242,9 +244,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     RelativeLayout RL1;
     private GestureDetectorCompat lSwipeDetector;
 
-    @Override
-    public void onStart() {
-        super.onStart();
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void myServiceStart(){
         if(NeedStartService()){
             Log.d("жопонька","инициируем запуск сервиса из активити");
             intent = new Intent(this, MapService.class);
@@ -252,10 +253,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             //intent.putExtra("ResetPlayer",resetPlayer);
             //intent.putExtra("Name",Name);
             //intent.putExtra("GroupID",group);
-            startForegroundService(intent);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                Log.d("жопонька", "Running on Android N or lower");
+                startService(intent);
+            } else {
+                Log.d("жопонька", "Running on Android O");
+                startForegroundService(intent);
+            }
         } else{
             Log.d("жопонька","в активити  обнаружен старый ранее запущенный сервис");
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public void onStart() {
+        super.onStart();
+        myServiceStart();
 
 
 
